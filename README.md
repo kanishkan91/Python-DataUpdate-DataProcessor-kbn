@@ -1,4 +1,8 @@
 # DataUpdate
+
+Author- Kanishka Narayan (kanishkan91@gmail.com)
+
+Description-
 The python module can be used to scrape data and process data from different sources. The python module can output data as either as a
 dataframe in the country year format or it will output data in excel files
 This module has primarily been created for processing data for the International Futures (IFs) Project however, it can be used to process
