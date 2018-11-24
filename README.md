@@ -18,12 +18,16 @@ data in general. The module can be used to process data from the following sourc
 Currently this module can be run as is on Windows. For usage on Macs, the user may have to make changes to the code lines which 
 specify paths.
 
-Instructions on use:
+Instructions for users new to Python:
+1) Download and install the latest version of Pycharm for your computer here- https://www.jetbrains.com/pycharm/
+2) Download and install Python version 3.7 from here- https://www.python.org/downloads/
+
+Instructions on general use:
 1) First download the zip file Pythonfiles.zip from this source below- 
 https://drive.google.com/file/d/1aD2Zi_CEsunQbJBkhbDvhwNX82EaGCU2/view?usp=sharing
 2) Place the zip file as is in this path 'C:\Users\Public'
 3) Create a new project in your Pycharm and copy the two Python files DataUpdate.py and DataforIFsFirstTimeInstallations.py to this 
- project.
+ project. (You have the option to copy the third file DataforIfs.py as well. 
  4) I have added a third python file called DataForIFs.py which can be used to run all the commands necessary to process data. However,
  using this file is optional.
  5) First to set up run the below code,
