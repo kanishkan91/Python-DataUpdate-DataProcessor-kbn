@@ -5,8 +5,8 @@
 
 #1: Select and run- This code will make the neccessary installations
 
-import DataUpdate
-DataUpdate.InstallAll()
+import DataforIFsFirstTimeInstallations
+DataforIFsFirstTimeInstallations.installAll()
 
 #2: Select and run- This code will run all scripts to save data fo individual files
 #a: WDI Indicators Data file
