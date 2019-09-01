@@ -148,34 +148,30 @@ def FAOFBS():
     import dask.dataframe as dd
     import statsmodels.api as sm
 
-    data = dd.read_csv(r'C:\\Users\Public\Pythonfiles\FoodBalanceSheets_E_All_Data_(Normalized).csv',
-                       encoding="ISO-8859-1")
-    # data=pd.concat(tp,ignore_index=True)
+    Country_Concord = pd.read_csv('C:\\Users\Public\Pythonfiles\CountryConcordFAO.csv', encoding="ISO-8859-1")
+    concord_table = pd.read_csv('C:\\Users\Public\Pythonfiles\Aggregation for crop type.csv')
+    series_concord_table = pd.read_csv('C:\\Users\Public\Pythonfiles\FAOSeriesConcordance.csv')
+    data = pd.read_csv(r'C:\\Users\Public\Pythonfiles\FoodBalanceSheets_E_All_Data_(Normalized).csv',
+                       encoding="ISO-8859-1",chunksize=100000)
 
-    data['Code'] = data[str('Element Code')] + data[str('Item Code')]
-    concord_table = dd.read_csv('C:\\Users\Public\Pythonfiles\Aggregation for crop type.csv')
+    chunk_list=[]
+    for chunk in data:
+        chunk['Code'] = chunk[str('Element Code')] + chunk[str('Item Code')]
+        chunk = pd.merge(chunk, concord_table, how="left", left_on="Item Code", right_on='Code no')
+        chunk['Series_Name'] = chunk[str('Code Name')] + chunk[str('Element')]
+        chunk = pd.merge(chunk, series_concord_table, how="left", left_on="Series_Name", right_on="Code in file")
+        chunk = pd.merge(chunk, Country_Concord, how="left", left_on="Area", right_on='Area Name')
+        chunk = chunk.dropna(how='any')
+        chunk = chunk.dropna(how='any')
+        chunk_list.append(chunk)
 
-    data = dd.merge(data, concord_table, how="left", left_on="Item Code", right_on='Code no')
+    data=pd.concat(chunk_list)
 
-    data['Series_Name'] = data[str('Code Name')] + data[str('Element')]
-    series_concord_table = dd.read_csv('C:\\Users\Public\Pythonfiles\FAOSeriesConcordance.csv')
-
-    data.columns = list(data.columns)
-    data = data.drop(
+    data.drop(
         ['Area Code', 'Item Code', 'Flag', 'Unit', 'Year Code', 'Element', 'Element Code', 'Code', 'Code Name', 'Item',
          'Code no'], axis=1)
-    print(data.head())
-    data = data.dropna(how='any')
-    print(data.head())
 
-    data.reset_index()
-
-    datapanda = data.compute()
-    # data=pd.DataFrame(data)
-    # p= datapanda.pivot_table(index=["Area",'Year'],values=['Value'],
-    # columns=["Series Name in Ifs"],aggfunc=[np.sum])
-
-    p = pd.pivot_table(datapanda, index=["Area", 'Year'], values=['Value'], columns=["Series_Name"], aggfunc=[np.sum])
+    p = pd.pivot_table(data, index=["Area", 'Year'], values=['Value'], columns=["Series_Name"], aggfunc=[np.sum])
 
     return (p)
 
@@ -213,24 +209,34 @@ def FAOFBSFish():
     import dask.dataframe as dd
     import statsmodels.api as sm
 
-    data = dd.read_csv('C:\\Users\Public\Pythonfiles\FoodBalanceSheets_E_All_Data_(Normalized).csv',
-                       encoding="ISO-8859-1")
-    # data=pd.concat(tp,ignore_index=True)
+    Country_Concord = pd.read_csv('C:\\Users\Public\Pythonfiles\CountryConcordFAO.csv', encoding="ISO-8859-1")
+    data = pd.read_csv('C:\\Users\Public\Pythonfiles\FoodBalanceSheets_E_All_Data_(Normalized).csv',
+                       encoding="ISO-8859-1",chunksize=100000)
+    concord_table = pd.read_csv('C:\\Users\Public\Pythonfiles\AggregationforFish.csv')
+    chunk_list = []
 
-    data['Code'] = data[str('Element Code')] + data[str('Item Code')]
-    concord_table = dd.read_csv('C:\\Users\Public\Pythonfiles\AggregationforFish.csv')
+    for chunk in data:
+        chunk['Code'] = chunk[str('Element Code')] + chunk[str('Item Code')]
+        chunk= pd.merge(chunk, concord_table, how="left", left_on="Code", right_on='Code in Source')
+        chunk = pd.merge(chunk, Country_Concord, how="left", left_on="Area", right_on='Area Name')
+        chunk = chunk.dropna(how='any')
+        chunk_list.append(chunk)
 
-    data = dd.merge(data, concord_table, how="left", left_on="Code", right_on='Code in Source')
+    data=pd.concat(chunk_list)
 
     data = data.drop(
         ['Area Code', 'Item Code', 'Flag', 'Unit', 'Year Code', 'Element', 'Element Code', 'Code', 'Item'], axis=1)
 
-    data = data.dropna(how='any')
-    data.reset_index()
+    #data = data.dropna(how='any')
+    #print(data.Country.unique())
 
-    datapanda = data.compute()
-    print(datapanda.head())
-    p = pd.pivot_table(datapanda, index=["Area", 'Year'], values=['Value'], columns=["Variable"], aggfunc=[np.sum])
+    #print("Dropped irrelevant columns, Na")
+    #data.reset_index()
+
+    #datapanda = data.groupby(["Area","Year","Variable"]).sum().compute()
+    #print(datapanda.head())
+
+    p = pd.pivot_table(data, index=["Country name in IFs", 'Year'], values=['Value'], columns=["Variable"], aggfunc=[np.sum])
 
     return (p)
 
@@ -385,7 +391,6 @@ def AQUASTATData():
 
 def AQUASTATDataFile():
     import pandas as pd
-
     p = AQUASTATData()
     p = p.reset_index()
     writer = pd.ExcelWriter('AQUASTAT.xlsx', engine='xlsxwriter')
@@ -394,49 +399,31 @@ def AQUASTATDataFile():
 
 
 def IMFGFSRevenueData():
-    import requests
     import numpy as np
-    import matplotlib.pyplot as plt
     import pandas as pd
-    import csv
-    import xlrd
-    import matplotlib.lines as mlines
-    import matplotlib.transforms as mtransforms
-    import xlsxwriter
-    import statsmodels.api as sm
     import dask.dataframe as dd
-
-    import requests
-    import numpy as np
-    import matplotlib.pyplot as plt
-    import pandas as pd
-    import csv
-    import xlrd
-    import matplotlib.lines as mlines
-    import matplotlib.transforms as mtransforms
-    import xlsxwriter
-    import statsmodels.api as sm
-    import dask.dataframe as dd
-
-    data = dd.read_csv('C:\\Users\Public\Pythonfiles\GFSRevenue.csv')
-
-    data['FuncSector'] = data[str('Sector Name')] + data[str('Classification Name')]
-
     concord_table = pd.read_excel('C:\\Users\Public\Pythonfiles\CountryConcordanceIMF.xlsx')
+    data = pd.read_csv('C:\\Users\Public\Pythonfiles\GFSRevenue.csv',chunksize=100000)
+    chunk_list=[]
+    for chunk in data:
+        chunk['FuncSector'] = chunk[str('Sector Name')] + chunk[str('Classification Name')]
+        chunk = chunk.merge(concord_table, on="Country Name", how='left')
+        chunk=chunk.rename(columns={"Time Period":"Year"})
+        chunk = chunk.loc[chunk['Unit Name'] == 'Percent of GDP']
+        chunk.dropna(how='any')
+        print(chunk.head())
+        chunk_list.append(chunk)
+    data=pd.concat(chunk_list)
 
-    data = data.merge(concord_table, on="Country Name", how='left')
-    data = data.loc[data['Unit Name'] == 'Percent of GDP']
-    print(data.head())
     data = data.drop(
         ['Country Code', 'Country Name', 'Classification Code', 'Sector Code', 'Unit Code', 'Status', 'Valuation',
          'Bases of recording (Gross/Net)', 'Nature of data'], axis=1)
 
     data = data.reset_index()
-    data = data.compute()
 
-    data = data.reset_index()
+    #data = data.reset_index()
 
-    p = pd.pivot_table(data, index=["Country name in IFs", "Unit Name", 'Time Period'], values=['Value'],
+    p = pd.pivot_table(data, index=["Country name in IFs", "Unit Name", 'Year'], values=['Value'],
                        columns=['FuncSector'], aggfunc=[np.sum])
 
     return (p)
@@ -618,5 +605,3 @@ def WDIDataFile():
     writer = pd.ExcelWriter('WDISeries.xlsx', engine='xlsxwriter')
     data.to_excel(writer, sheet_name='WDIData', merge_cells=False)
     writer.save()
-
-
