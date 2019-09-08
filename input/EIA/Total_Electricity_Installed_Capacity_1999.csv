@@ -1,0 +1,221 @@
+"Total Electricity Installed Capacity 1999"
+"https://www.eia.gov/beta/international/rankings/#?prodact=2-7&cy=1999&pid=2&aid=7&tl_id=7-A&tl_type=a"
+"Tue Nov 06 2018 14:21:32 GMT-0700 (Mountain Standard Time)"
+"Source: U.S. Energy Information Administration"
+"Units: Million Kilowatts"
+,Ranking,Country,Value,Percent
+,1,"United States",769,23
+,2,"China",302,9
+,3,"Japan",251,8
+,4,"Russia",203,6
+,5,"France",114,3
+,6,"Canada",109,3
+,7,"India",108,3
+,8,"Germany",108,3
+,9,"United Kingdom",74,2
+,10,"Italy",72,2
+,11,"Brazil",66,2
+,12,"Ukraine",53,2
+,13,"Korea, South",51,2
+,14,"Spain",50,2
+,15,"Australia",46,1
+,16,"South Africa",41,1
+,17,"Mexico",38,1
+,18,"Sweden",32,1
+,19,"Iran",31,1
+,20,"Poland",30,1
+,21,"Norway",28,1
+,22,"Taiwan",28,1
+,23,"Turkey",26,1
+,24,"Argentina",23,1
+,25,"Saudi Arabia",23,1
+,26,"Romania",23,1
+,27,"Thailand",22,1
+,28,"Indonesia",22,1
+,29,"Venezuela",21,1
+,30,"Netherlands",20,1
+,31,"Egypt",18,1
+,32,"Pakistan",17,1
+,33,"Switzerland",17,1
+,34,"Kazakhstan",16,0
+,35,"Belgium",15,0
+,36,"Czech Republic",15,0
+,37,"Finland",15,0
+,38,"Austria",15,0
+,39,"Colombia",13,0
+,40,"Malaysia",13,0
+,41,"Bulgaria",12,0
+,42,"Uzbekistan",12,0
+,43,"Hong Kong",11,0
+,44,"Philippines",11,0
+,45,"Greece",11,0
+,46,"Portugal",10,0
+,47,"Denmark",10,0
+,48,"Former Serbia and Montenegro",9.6,0
+,49,"Korea, North",9.5,0
+,50,"Chile",9.1,0
+,51,"Israel",8.6,0
+,52,"Kuwait",8.5,0
+,53,"New Zealand",8.5,0
+,54,"Slovakia",8,0
+,55,"Hungary",7.7,0
+,56,"Paraguay",7.4,0
+,57,"Belarus",7.4,0
+,58,"Singapore",6.7,0
+,59,"Algeria",6,0
+,60,"Syria",6,0
+,61,"Nigeria",5.9,0
+,62,"United Arab Emirates",5.8,0
+,63,"Vietnam",5.6,0
+,64,"Peru",5.6,0
+,65,"Iraq",5.6,0
+,66,"Lithuania",4.9,0
+,67,"Puerto Rico",4.9,0
+,68,"Azerbaijan",4.7,0
+,69,"Libya",4.6,0
+,70,"Tajikistan",4.4,0
+,71,"Bosnia and Herzegovina",4.4,0
+,72,"Georgia",4.4,0
+,73,"Cuba",4.3,0
+,74,"Ireland",4.3,0
+,75,"Morocco",4.1,0
+,76,"Kyrgyzstan",3.8,0
+,77,"Bangladesh",3.6,0
+,78,"Ecuador",3.5,0
+,79,"Croatia",3.4,0
+,80,"Dominican Republic",3.1,0
+,81,"Armenia",3,0
+,82,"Turkmenistan",2.9,0
+,83,"Estonia",2.6,0
+,84,"Slovenia",2.6,0
+,85,"Congo (Kinshasa)",2.5,0
+,86,"Tunisia",2.4,0
+,87,"Mozambique",2.4,0
+,88,"Lebanon",2.3,0
+,89,"Uruguay",2.2,0
+,90,"Latvia",2.1,0
+,91,"Oman",2,0
+,92,"Qatar",1.9,0
+,93,"Zimbabwe",1.9,0
+,94,"Sri Lanka",1.8,0
+,95,"Zambia",1.7,0
+,96,"Albania",1.7,0
+,97,"Jordan",1.7,0
+,98,"Macedonia",1.4,0
+,99,"Trinidad and Tobago",1.4,0
+,100,"Costa Rica",1.4,0
+,101,"Bolivia",1.3,0
+,102,"Jamaica",1.3,0
+,103,"Guatemala",1.3,0
+,104,"Luxembourg",1.2,0
+,105,"Panama",1.2,0
+,106,"Ghana",1.2,0
+,107,"Bahrain",1.2,0
+,107,"Iceland",1.2,0
+,109,"Burma (Myanmar)",1.2,0
+,110,"Moldova",1,0
+,111,"Kenya",1,0
+,112,"El Salvador",1,0
+,113,"Cote dIvoire (IvoryCoast)",0.9,0
+,114,"Mongolia",0.9,0
+,115,"Honduras",0.9,0
+,116,"Cameroon",0.8,0
+,117,"Tanzania",0.8,0
+,118,"Yemen",0.8,0
+,119,"Brunei",0.8,0
+,120,"Cyprus",0.7,0
+,121,"Sudan",0.7,0
+,122,"Angola",0.6,0
+,123,"Nicaragua",0.6,0
+,124,"Malta",0.6,0
+,125,"Guam",0.6,0
+,126,"Papua New Guinea",0.5,0
+,127,"Mauritius",0.5,0
+,128,"Afghanistan",0.5,0
+,129,"Ethiopia",0.4,0
+,130,"Reunion",0.4,0
+,131,"Laos",0.4,0
+,132,"Guadeloupe",0.4,0
+,133,"Bahamas, The",0.4,0
+,134,"Gabon",0.4,0
+,135,"Martinique",0.4,0
+,136,"Namibia",0.4,0
+,137,"Nepal",0.4,0
+,137,"Suriname",0.4,0
+,139,"Bhutan",0.4,0
+,140,"Macau",0.4,0
+,141,"New Caledonia",0.3,0
+,142,"Virgin Islands,  U.S.",0.3,0
+,143,"Guyana",0.3,0
+,144,"Uganda",0.3,0
+,145,"Senegal",0.3,0
+,146,"Malawi",0.2,0
+,147,"Haiti",0.2,0
+,148,"Netherlands Antilles",0.2,0
+,149,"Madagascar",0.2,0
+,150,"Fiji",0.2,0
+,151,"Guinea",0.2,0
+,152,"Bermuda",0.2,0
+,153,"Barbados",0.2,0
+,154,"French Guiana",0.2,0
+,155,"Mauritania",0.1,0
+,155,"Niger",0.1,0
+,157,"Greenland",0.1,0
+,158,"Botswana",0.1,0
+,159,"Swaziland",0.1,0
+,160,"Burkina Faso",0.1,0
+,160,"Congo (Brazzaville)",0.1,0
+,162,"Cambodia",0.1,0
+,163,"French Polynesia",0.1,0
+,164,"Aruba",0.1,0
+,164,"Mali",0.1,0
+,--,"Cayman Islands",(s),0
+,--,"Togo",(s),0
+,--,"Seychelles",(s),0
+,--,"Faroe Islands",(s),0
+,--,"Djibouti",(s),0
+,--,"Somalia",(s),0
+,--,"Lesotho",(s),0
+,--,"Eritrea",(s),0
+,--,"Saint Lucia",(s),0
+,--,"Sierra Leone",(s),0
+,--,"Belize",(s),0
+,--,"Western Sahara",(s),0
+,--,"Burundi",(s),0
+,--,"Benin",(s),0
+,--,"U.S. Pacific Islands",(s),0
+,--,"Rwanda",(s),0
+,--,"Cape Verde",(s),0
+,--,"Central African Republic",(s),0
+,--,"American Samoa",(s),0
+,--,"Gibraltar",(s),0
+,--,"Maldives",(s),0
+,--,"Chad",(s),0
+,--,"Gambia, The",(s),0
+,--,"Grenada",(s),0
+,--,"Antigua and Barbuda",(s),0
+,--,"Saint Pierre and Miquelon",(s),0
+,--,"Samoa",(s),0
+,--,"Guinea-Bissau",(s),0
+,--,"Saint Kitts and Nevis",(s),0
+,--,"Dominica",(s),0
+,--,"Vanuatu",(s),0
+,--,"Saint Vincent/Grenadines",(s),0
+,--,"Solomon Islands",(s),0
+,--,"Sao Tome and Principe",(s),0
+,--,"Cook Islands",(s),0
+,--,"Liberia",(s),0
+,--,"Nauru",(s),0
+,--,"Virgin Islands, British",(s),0
+,--,"Falkland Islands (Islas Malvinas)",(s),0
+,--,"Tonga",(s),0
+,--,"Equatorial Guinea",(s),0
+,--,"Comoros",(s),0
+,--,"Saint Helena",(s),0
+,--,"Turks and Caicos Islands",(s),0
+,--,"Kiribati",(s),0
+,--,"Montserrat",(s),0
+,--,"Niue",(s),0
+,--,"Antarctica",0,0
+,--,"Palestinian Territories",0,0
+,--,"Wake Island",0,0

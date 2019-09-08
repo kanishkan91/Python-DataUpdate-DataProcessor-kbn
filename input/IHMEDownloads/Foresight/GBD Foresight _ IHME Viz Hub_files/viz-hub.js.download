@@ -1,0 +1,294 @@
+var VizHub = VizHub || {};
+
+$.fn.VizHubPopover = $.fn.popover;
+
+VizHub.config = function(){
+  var self = this;
+	VizHub._config = VizHub._config || {};
+	var args = Array.prototype.slice.call(arguments);
+	
+	if (typeof args[0] != 'object') return VizHub._config[args[0]];
+	
+	var components = self.config('components');
+
+	args.forEach(function(arg){
+		if (typeof arg == 'object'){
+  		VizHub._config = VizHub.merge(VizHub._config, arg);
+  		Object.keys(arg).forEach(function(component){
+    		if(components && components.indexOf(component) != -1 && self[component] && typeof self[component].update == 'function'){
+      		self[component].update();
+    		}
+  		});
+    }
+	});
+
+	return VizHub._config;
+}
+
+VizHub.merge = function(){
+	var dst = {}, src, p, args;
+	args = new Array(arguments.length);
+
+	for (var i = 0; i < args.length; ++i) {
+		args[i] = arguments[i];
+	}
+
+	while (args.length > 0) {
+		src = args.splice(0, 1)[0];
+		if (Object.prototype.toString.call(src) == '[object Object]'){
+			for (p in src){
+				// check if dst.hasOwnProp(p), then p does not explicity
+				// disallow overwritting (i.e., the property is frozen)
+				if (src.hasOwnProperty(p) &&
+					(!dst.hasOwnProperty(p) || !dst[p].hasOwnProperty('frozen') || !dst[p].frozen)) {
+					if (Object.prototype.toString.call(src[p]) == '[object Object]'){
+						dst[p] = util.merge(dst[p] || {}, src[p]);
+					}
+					else dst[p] = src[p];
+				}
+			}
+		}
+	}
+	return dst;
+}
+
+VizHub.init = function(config){
+	var self = this;
+	var defaults = {
+		shortener: false,
+		url: function() { return window.location.href; }
+	};
+
+	self.config(defaults, config);
+
+	self.config('components').forEach(function(c){
+		if(self[c] && typeof self[c].init == 'function') self[c].init();
+	});
+
+	$(document).keyup(function(e){
+		if(e.keyCode == 27){ $(this).VizHubPopover('closePopover'); }
+	});
+}
+
+VizHub.share = VizHub.share || {};
+
+VizHub.share.async = function(finalCb) {
+	// this passes the results of the serial async functions
+	// to one after the other
+	async.waterfall([
+		VizHub.config('url'),
+		VizHub.share.shortenAsync
+	], function(err, url) {
+		if (err) console.log('VizHub.share.async error');
+		finalCb(null, url);
+	});
+};
+
+VizHub.share.sync = function(finalCb) {
+	// this works synchronously, just like always
+	var url = VizHub.share.shorten(VizHub.config('url')());
+	finalCb(null, url);
+};
+
+VizHub.share.bootstrap = function(url, callback) {
+	var clip = new ZeroClipboard($('#vizhub-action-share-button-copy'));
+
+	clip.on("ready", function(){
+
+		this.on("beforecopy", function(event) {
+			$("#header-actions-share").VizHubPopover('lockPopover');
+		});
+
+		this.on("aftercopy", function(event){
+			$("#vizhub-action-share-url-outer").stop().addClass("focus")
+				.delay(250).queue(function(){ $(this).removeClass("focus"); });
+			$("#header-actions-share").VizHubPopover('unlockPopover');
+		});
+	});
+
+	clip.on("error", function(event){ $('#vizhub-action-share-button-copy').hide(); });
+
+	$('#vizhub-action-share-url span').text(url);
+
+	$('#vizhub-action-share-button-copy').attr('data-clipboard-text', encodeURI(url));
+
+	$('#vizhub-action-share-button-email').click(function(){
+		window.location.href = 'mailto:?subject=' + encodeURIComponent(VizHub.config('title')) +'&body=Check out these graphs from ' + encodeURIComponent(VizHub.config('title')) + ': ' + encodeURIComponent(url);
+	});
+
+	$('#vizhub-action-share-button-facebook').click(function(){
+		window.open('http://www.facebook.com/sharer.php?u=' + encodeURIComponent(url), 'facebook', VizHub.share.sizeWindow(800, 400));
+	});
+
+	$('#vizhub-action-share-button-twitter').click(function(){
+		window.open('http://twitter.com/share?url=' + encodeURIComponent(url), 'twitter', VizHub.share.sizeWindow(800, 400));
+	});
+
+  $('#header-actions-share').VizHubPopover("updatePositions");
+  
+	callback(null);
+};
+
+VizHub.share.init = function(){
+	$("#header-actions-share").VizHubPopover({
+		id: "header-actions-share",
+		contents:	VizHub.share.content,
+		onVisible: function(){
+			var urlGetter = VizHub.config('url');
+			var operation = !urlGetter.hasOwnProperty('async')
+				? VizHub.share.sync
+				: (urlGetter.async === true) ? VizHub.share.async : VizHub.share.sync;
+
+			async.waterfall([
+				operation,
+				VizHub.share.bootstrap
+			], function(err) {
+				if (err) console.log(err);
+			});
+
+		}
+	});
+}
+
+VizHub.share.sizeWindow = function(width, height){
+	var left = ((window.screenLeft) ? window.screenLeft : window.screenX) + (window.innerWidth / 2)  - (width / 2);
+	var top =  ((window.screenTop)  ? window.screenTop  : window.screenY) + (window.innerHeight / 2) - (height / 2);
+	return 'width=' + width + ',height=' + height + ',top=' + top + ',left=' + left;
+}
+
+VizHub.share.content = function(){
+	var content = $('<div/>',{id: 'vizhub-action-share-content', 'class': 'vizhub-action-content'});
+
+	content.append($('<h2/>').text('Share these charts'));
+	content.append($('<div/>').attr('id','vizhub-action-share-url-outer'));
+	content.append($('<div/>').attr('id','vizhub-action-share-url').append($('<span/>')));
+
+	var options = $('<div/>').attr('id','vizhub-action-share-options').attr('class', 'clearfix').appendTo(content);
+
+	$('<a/>')
+		.attr('id', 'vizhub-action-share-button-copy')
+		.text('Copy')
+		.appendTo(options);
+
+	$('<a/>')
+		.attr('id', 'vizhub-action-share-button-email')
+		.text('Email')
+		.appendTo(options);
+
+	$('<a/>')
+		.attr('id', 'vizhub-action-share-button-facebook')
+		.text('Facebook')
+		.appendTo(options);
+
+	$('<a/>')
+		.attr('id', 'vizhub-action-share-button-twitter')
+		.text('Twitter')
+		.appendTo(options);
+
+	return content.wrap("<div/>").parent().html();
+}
+
+VizHub.share.shorten = function(url){
+	if(VizHub.config('shortener')){
+		$.ajax({
+			async: false,
+			data: {longurl: encodeURI(url)},
+			url: VizHub.config('shortener'),
+			success: function(response){ url = response; },
+			error: function(){ url = url; }
+		});
+	}
+	return url;
+};
+
+VizHub.share.shortenAsync = function(url, callback){
+	// if shortener is configured off,
+	// return early
+	if (!VizHub.config('shortener')) return callback(null, url);
+
+	$.ajax({
+		data: {longurl: encodeURI(url)},
+		url: VizHub.config('shortener'),
+		success: function(shortenedUrl) {
+			callback(null, shortenedUrl);
+		},
+		error: function() {
+			// on error, fallback to using whatever url was passed
+			// into this function
+			callback(null, url);
+		}
+	});
+};
+
+VizHub.download = VizHub.download || {};
+
+VizHub.download.init = function(){
+	$("#header-actions-download").VizHubPopover({
+		id: "header-actions-download",
+		contents:	VizHub.download.content,
+		onVisible: function(){
+			download = VizHub.config('download');
+			$('.vizhub-action-download-option').each(function(i,o){
+				$(o).click(function(){ download[i].click(); })
+			});
+		}
+	});
+	
+	VizHub.download.update();
+}
+
+VizHub.download.content = function(){
+	var content = $('<div/>',{id: 'vizhub-action-download-content', 'class': 'vizhub-action-content'});
+
+	if(download = VizHub.config('download')){
+		download.forEach(function(d){
+			var option = $('<span/>', {'class': 'vizhub-action-download-option'}).text(d.text).appendTo(content);
+		})
+	}
+
+	return content.wrap("<div/>").parent().html();
+}
+
+VizHub.download.update = function(){
+  var downloads = VizHub.config('download');
+  
+  if(downloads && downloads.length){
+    $("#header-actions-download").show();
+  }
+  
+  else $("#header-actions-download").hide();
+}
+
+VizHub.language = VizHub.language || {};
+
+VizHub.language.init = function(){
+	$("#header-actions-language").VizHubPopover({
+		id: "header-actions-language",
+		contents:	VizHub.language.content,
+		onVisible: function(){
+			$('.vizhub-action-language-option').not('.current').click(function(){
+				var lang = Number($(this).attr('data-language'));
+				if (lang === lang) {
+					VizHub.config({language: lang});
+					$(document).trigger("localized", {lang: lang});
+					Cookies.set('vizhub-lang', lang, { expires: 1 });
+					$("#header-actions-language").VizHubPopover('closePopover');
+				}
+			});
+		}
+	});
+}
+
+VizHub.language.content = function(){
+	var content = $('<div/>',{id: 'vizhub-action-language-content', 'class': 'vizhub-action-content'});
+
+	if(languages = VizHub.config('languages')){
+		var lang = VizHub.config('language');
+		languages.forEach(function(l){
+			var option = $('<span/>', {'class': 'vizhub-action-language-option', 'data-language': l.language_id}).text(l.language).appendTo(content);
+			if(l.language_id == lang) option.addClass('current');
+		})
+	}
+
+	return content.wrap("<div/>").parent().html();
+}
