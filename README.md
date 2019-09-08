@@ -25,7 +25,7 @@ Instructions for users new to Python:
 Instructions on general use:
 1) First download the zip file Pythonfiles.zip from this source below- 
 https://drive.google.com/file/d/1aD2Zi_CEsunQbJBkhbDvhwNX82EaGCU2/view?usp=sharing
-2) Place the zip file as is in this path 'C:\Users\Public'
+2) Place the zip file as is in the 'input/' folder in the same folder as your DataUpdate.py file
 3) Create a new project in your Pycharm and copy the two Python files DataUpdate.py and DataforIFsFirstTimeInstallations.py to this 
  project. (You have the option to copy the third file DataforIfs.py as well. 
  4) I have added a third python file called DataForIFs.py which can be used to run all the commands necessary to process data. However,
