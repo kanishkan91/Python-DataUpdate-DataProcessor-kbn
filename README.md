@@ -9,14 +9,16 @@ This module has primarily been created for processing data for the International
 data in general. The module can be used to process data from the following sources,
 1) World Bank World Development Indicators (WDI)
 2) UNESCO Education indicators(UIS)
-3) FAO Food Balance Sheets (FAO)
-4) IMF Global Finance Statistics (IMF GFS)
-5) Health data from the Institute for Health and Metric Evaluation (IHME)
-6) Water data from FAO AQUASTAT
-7) Energy data from EIA
+3) FAO Food Balance Sheets consolidated data (FAO)
+4) IMF Global Finance Statistics (IMF GFS) (Revenue and Expenditure Data)
+5) Health detailed data file from IHME
+6) Health data from the Institute for Health and Metric Evaluation (IHME)
+7) Water data from FAO AQUASTAT
+8) Energy data from EIA
+9) Fish detailed agricultural data (FAO FBS Fish)
 
-Currently this module can be run as is on Windows. For usage on Macs, the user may have to make changes to the code lines which 
-specify paths.
+
+
 
 Instructions for users new to Python:
 1) Download and install the latest version of Pycharm for your computer here- https://www.jetbrains.com/pycharm/
@@ -54,6 +56,7 @@ DataUpdate.FAOFBSFile()
  10) Currently, only the WDI data pull and the UIS data pull scrape data using APIs. For the rest, just update the Base data in the Python
  files folder.
  11) Similarly, users can make changes to individual concordance tables as well
+ 12) Use the CreateSQLTable.py file to generate the MasterData.db database. A total of 978 data series will be generated!
  
 
 
