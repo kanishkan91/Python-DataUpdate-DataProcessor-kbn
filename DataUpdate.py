@@ -477,15 +477,17 @@ def IMFGFSExpenditureData():
     import xlsxwriter
     import statsmodels.api as sm
 
-    data = pd.read_csv('input\GFSCOFOG_02-23-2018 23-30-06-28.csv')
-
-    data['FuncSector'] = data[str('COFOG Function Name')] + data[str('Sector Name')]
-
-
+    data = pd.read_csv('input\GFSCOFOG_02-23-2018 23-30-06-28.csv',chunksize=10000)
     concord_table = pd.read_excel('input\CountryConcordanceIMF.xlsx')
+    chunk_list=[]
+    for chunk in data:
+        chunk['FuncSector'] = chunk[str('COFOG Function Name')] + chunk[str('Sector Name')]
+        chunk = chunk.merge(concord_table, on="Country Name", how='left')
+        chunk=chunk[chunk['Country name in IFs'].notnull()]
+        chunk_list.append(chunk)
 
+    data=pd.concat(chunk_list)
 
-    data = data.merge(concord_table, on="Country Name", how='left')
 
 
     data = pd.pivot_table(data, index=["Country name in IFs", "Unit Name", 'Time Period'], values=['Value'],
@@ -493,6 +495,7 @@ def IMFGFSExpenditureData():
     data = pd.DataFrame(data.to_records())
     data.columns = [hdr.replace("('sum', 'Value',", "").replace(")", "").replace("'", "") \
                     for hdr in data.columns]
+    print("IMF GFS Expenditure data done")
     return (data)
 
 
