@@ -1,53 +1,36 @@
 import DataUpdate
 import sqlite3
-import pandas as pd
-import numpy as np
+import time
 
-connection=sqlite3.connect("output/IFsHistSeries.db")
+#Generate database
+connection=sqlite3.connect("output/Database/IFsHistSeries.db")
+print('Database created at output/Database/IFsHistSeries.db')
 cursor=connection.cursor()
 
-Aquastat=DataUpdate.AQUASTATData()
-Aquastat2=Aquastat.drop(["Country Name in IFs","Year"],axis=1)
+#AQUASTAT Data
+print('Starting AQUASTAT data')
+start=time.time()
+Aquastat=DataUpdate.AQUASTATData(write_csv_output=True)
+DataUpdate.Write_to_SQL(Aquastat,connection)
+end=time.time()
+print(end-start)
 
 
-for col in (Aquastat2):
-    data=Aquastat[["Country Name in IFs","Year",str(col)]]
-    data1=pd.pivot_table(data,values=[str(col)],index=["Country Name in IFs"], columns=["Year"],aggfunc=[np.sum])
+#IMFGFS Expenditure data
+print('Starting IMF GFS expenditure data')
+start=time.time()
+IMFExp=DataUpdate.IMFGFSExpenditureData(write_csv_output=True)
+DataUpdate.Write_to_SQL(IMFExp,connection)
+end=time.time()
+print(end-start)
 
-    #Get Most Recent Year
-    dataRecent=data.dropna()
-    dataRecent=dataRecent.sort_values(["Country Name in IFs","Year"])
-    dataRecent=dataRecent.drop_duplicates("Country Name in IFs",keep='last')
-    dataRecent.reset_index()
-    dataRecent.columns=["Country Name in IFs","MostRecentYear","MostRecentValue"]
-
-    #Get Earliest Year
-    dataEarliest = data.dropna()
-    dataEarliest= dataEarliest.sort_values(["Country Name in IFs", "Year"])
-    dataEarliest = dataEarliest.drop_duplicates("Country Name in IFs", keep='first')
-    dataEarliest.reset_index()
-    dataEarliest.columns = ["Country Name in IFs", "EarliestYear", "EarliestValue"]
-
-    data1 = pd.DataFrame(data1.to_records())
-    val="('sum', '"+str(col)+"', "
-    data1.columns = [hdr.replace(val,"").replace(")", "").replace("'", "") \
-                    for hdr in data1.columns]
-
-    data1=pd.merge(data1,dataRecent,how='left',left_on="Country Name in IFs",right_on="Country Name in IFs")
-    data1=pd.merge(data1,dataEarliest,how='left',left_on="Country Name in IFs",right_on="Country Name in IFs")
-    print(data1.head())
-
-    data1.to_sql(name=str("Series").strip()+str(col).strip(), con=connection, if_exists="replace", index=False)
-
-
-
-
-IMFExp=DataUpdate.IMFGFSExpenditureData()
-IMFExp.to_sql(name="IMFExpenditure", con=connection, if_exists="replace", index=False)
-
-
-FAO=DataUpdate.FAOFBS()
-FAO.to_sql(name="FAOFoodBalanceSheetAggregated", con=connection, if_exists="replace", index=False)
+#FAO Data
+print('Starting FAO Food balance sheet data')
+start=time.time()
+FAO=DataUpdate.FAOFBS(write_csv_output=True)
+DataUpdate.Write_to_SQL(FAO,connection)
+end=time.time()
+print(end-start)
 
 WDI=DataUpdate.WDIData()
 WDI.to_sql(name="WorldDevelopmentIndicators",con=connection,if_exists="replace",index=False)

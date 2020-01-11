@@ -144,23 +144,16 @@ def IHMEHistoricalDeathsFile():
     writer.save()
 
 
-def FAOFBS():
-    import requests
+def FAOFBS(write_csv_output=False):
     import numpy as np
-    import matplotlib.pyplot as plt
     import pandas as pd
-    import csv
-    import xlrd
-    import matplotlib.lines as mlines
-    import matplotlib.transforms as mtransforms
-    import xlsxwriter
-    import dask.dataframe as dd
-    import statsmodels.api as sm
 
-    Country_Concord = pd.read_csv('input\CountryConcordFAO.csv', encoding="ISO-8859-1")
-    concord_table = pd.read_csv('input\Aggregation for crop type.csv')
-    series_concord_table = pd.read_csv('input\FAOSeriesConcordance.csv')
-    data = pd.read_csv(r'input\FoodBalanceSheets_E_All_Data_(Normalized).csv',
+
+
+    Country_Concord = pd.read_csv('input\FAO\CountryConcordFAO.csv', encoding="ISO-8859-1")
+    concord_table = pd.read_csv('input\FAO\Aggregation for crop type.csv')
+    series_concord_table = pd.read_csv('input\FAO\FAOSeriesConcordance.csv')
+    data = pd.read_csv(r'input\FAO\FoodBalanceSheets_E_All_Data_(Normalized).csv',
                        encoding="ISO-8859-1",chunksize=100000)
 
     chunk_list=[]
@@ -184,27 +177,13 @@ def FAOFBS():
     data = pd.DataFrame(data.to_records())
     data.columns = [hdr.replace("('sum', 'Value',", "").replace(")", "").replace("'", "") \
                     for hdr in data.columns]
+    data=data.rename(columns={"Area":"CountryName"})
+
+    if write_csv_output==True:
+        data.to_csv('output\CSV\FAOFBS.csv')
+
     return (data)
 
-
-def FAOFBSFile():
-    import requests
-    import numpy as np
-    import matplotlib.pyplot as plt
-    import pandas as pd
-    import csv
-    import xlrd
-    import matplotlib.lines as mlines
-    import matplotlib.transforms as mtransforms
-    import xlsxwriter
-    import dask.dataframe as dd
-    import statsmodels.api as sm
-
-    p = FAOFBS()
-    writer = pd.ExcelWriter('FAOFBS2019.xlsx', engine='xlsxwriter')
-    p.to_excel(writer, sheet_name='FAOFBS')
-
-    writer.save()
 
 
 def FAOFBSFish():
@@ -217,7 +196,6 @@ def FAOFBSFish():
     import matplotlib.lines as mlines
     import matplotlib.transforms as mtransforms
     import xlsxwriter
-    import dask.dataframe as dd
     import statsmodels.api as sm
 
     Country_Concord = pd.read_csv('input\CountryConcordFAO.csv', encoding="ISO-8859-1")
@@ -264,7 +242,6 @@ def FAOFBSFishFile():
     import matplotlib.lines as mlines
     import matplotlib.transforms as mtransforms
     import xlsxwriter
-    import dask.dataframe as dd
     import statsmodels.api as sm
 
     p = FAOFBSFish()
@@ -364,53 +341,33 @@ def UISDataFile():
 
     writer.save()
 
-
-def AQUASTATData():
-    import requests
+def AQUASTATData(write_csv_output=False):
     import numpy as np
-    import matplotlib.pyplot as plt
     import pandas as pd
-    import csv
-    import xlrd
-    import matplotlib.lines as mlines
-    import matplotlib.transforms as mtransforms
-    import xlsxwriter
-    import dask.dataframe as dd
-    import statsmodels.api as sm
 
-    data = pd.read_excel('input\AQUASTAT.xlsx')
+    data = pd.read_csv(r'input\AQUASTAT\AQUASTAT.csv', encoding="ISO-8859-1")
 
-    country_concordance = pd.read_excel('input\CountryConcordanceAQUASTAT.xlsx')
+    country_concordance = pd.read_csv(r'input\AQUASTAT\CountryConcordanceAQUASTAT.csv', encoding="ISO-8859-1")
 
     data = pd.merge(data, country_concordance, how="left", left_on="Area", right_on="Area name")
 
-    series_concordance = pd.read_excel('input\SeriesConcordanceAQUASTAT.xlsx')
-
-    # print (series_concordance.head())
-    # print(data.head())
+    series_concordance = pd.read_csv(r'input\AQUASTAT\SeriesConcordanceAQUASTAT.csv', encoding="ISO-8859-1")
 
     data = pd.merge(data, series_concordance, how="left", left_on="Variable Name", right_on="Series name in Aquastat")
-    # print(data.head())
-    # print(data['Country Name in IFs'].unique)
+
     data = data.drop(['Variable Id', 'Area Id', 'Symbol', 'Md'], axis=1)
 
     data = data.dropna(how='any')
-    data = pd.pivot_table(data, index=['Country Name in IFs', 'Year'], columns=['Series name in IFs'], values=['Value'],
+    data = pd.pivot_table(data, index=['CountryName', 'Year'], columns=['SeriesName'], values=['Value'],
                        aggfunc=[np.sum])
     data = pd.DataFrame(data.to_records())
     data.columns = [hdr.replace("('sum', 'Value',", "").replace(")", "").replace("'", "") \
                     for hdr in data.columns]
+
+    if write_csv_output==True:
+        data.to_csv('output/CSV/AQUASTATOutput.csv')
+
     return (data)
-
-
-def AQUASTATDataFile():
-    import pandas as pd
-    p = AQUASTATData()
-    p = p.reset_index()
-    writer = pd.ExcelWriter('AQUASTAT.xlsx', engine='xlsxwriter')
-    p.to_excel(writer, sheet_name='1', merge_cells=False)
-    writer.save()
-
 
 def IMFGFSRevenueData():
     import numpy as np
@@ -465,58 +422,33 @@ def IMFGFSRevenueDataFile():
     writer.save()
 
 
-def IMFGFSExpenditureData():
-    import requests
+def IMFGFSExpenditureData(write_csv_output=False):
     import numpy as np
-    import matplotlib.pyplot as plt
     import pandas as pd
-    import csv
-    import xlrd
-    import matplotlib.lines as mlines
-    import matplotlib.transforms as mtransforms
-    import xlsxwriter
-    import statsmodels.api as sm
 
-    data = pd.read_csv('input\GFSCOFOG_02-23-2018 23-30-06-28.csv',chunksize=10000)
-    concord_table = pd.read_excel('input\CountryConcordanceIMF.xlsx')
+    data = pd.read_csv('input\IMFGFS\GFSCOFOG_02-23-2018 23-30-06-28.csv',chunksize=10000)
+    concord_table = pd.read_csv('input\IMFGFS\CountryConcordanceIMF.csv', encoding="ISO-8859-1")
     chunk_list=[]
     for chunk in data:
         chunk['FuncSector'] = chunk[str('COFOG Function Name')] + chunk[str('Sector Name')]
         chunk = chunk.merge(concord_table, on="Country Name", how='left')
-        chunk=chunk[chunk['Country name in IFs'].notnull()]
+        chunk=chunk[chunk['CountryName'].notnull()]
         chunk_list.append(chunk)
 
     data=pd.concat(chunk_list)
 
-
-
-    data = pd.pivot_table(data, index=["Country name in IFs", "Unit Name", 'Time Period'], values=['Value'],
+    data = pd.pivot_table(data, index=["CountryName", "Unit Name", 'Time Period'], values=['Value'],
                        columns=['FuncSector'], aggfunc=[np.sum])
     data = pd.DataFrame(data.to_records())
     data.columns = [hdr.replace("('sum', 'Value',", "").replace(")", "").replace("'", "") \
                     for hdr in data.columns]
-    print("IMF GFS Expenditure data done")
+
+    data=data.rename(columns={"Time Period":"Year"})
+
+    if write_csv_output==True:
+        data.to_csv('output\CSV\IMFGFSExpOutput.csv')
+
     return (data)
-
-
-def IMFGFSExpenditureDataFile():
-    import requests
-    import numpy as np
-    import matplotlib.pyplot as plt
-    import pandas as pd
-    import csv
-    import xlrd
-    import matplotlib.lines as mlines
-    import matplotlib.transforms as mtransforms
-    import xlsxwriter
-    import statsmodels.api as sm
-
-    p = IMFGFSExpenditureData()
-    writer = pd.ExcelWriter('IMFGFSEXP.xls', engine='xlsxwriter')
-    p.to_excel(writer, sheet_name='EXP')
-
-    writer.save()
-
 
 def WDIData():
     import numpy as np
@@ -619,3 +551,38 @@ def WDIDataFile():
     writer = pd.ExcelWriter('WDISeries.xlsx', engine='xlsxwriter')
     data.to_excel(writer, sheet_name='WDIData', merge_cells=False)
     writer.save()
+
+#A function to write tables to SQL
+def Write_to_SQL(df,con):
+    import pandas as pd
+    import numpy as np
+    df2 = df.drop(["CountryName", "Year"], axis=1)
+    for col in (df2):
+        data = df[["CountryName", "Year", str(col)]]
+        data1 = pd.pivot_table(data, values=[str(col)], index=["CountryName"], columns=["Year"],
+                               aggfunc=[np.sum])
+
+        # Get Most Recent Year
+        dataRecent = data.dropna()
+        dataRecent = dataRecent.sort_values(["CountryName", "Year"])
+        dataRecent = dataRecent.drop_duplicates("CountryName", keep='last')
+        dataRecent.reset_index()
+        dataRecent.columns = ["CountryName", "MostRecentYear", "MostRecentValue"]
+
+        # Get Earliest Year
+        dataEarliest = data.dropna()
+        dataEarliest = dataEarliest.sort_values(["CountryName", "Year"])
+        dataEarliest = dataEarliest.drop_duplicates("CountryName", keep='first')
+        dataEarliest.reset_index()
+        dataEarliest.columns = ["CountryName", "EarliestYear", "EarliestValue"]
+
+        data1 = pd.DataFrame(data1.to_records())
+        val = "('sum', '" + str(col) + "', "
+        data1.columns = [hdr.replace(val, "").replace(")", "").replace("'", "") \
+                         for hdr in data1.columns]
+
+        data1 = pd.merge(data1, dataRecent, how='left', left_on="CountryName", right_on="CountryName")
+        data1 = pd.merge(data1, dataEarliest, how='left', left_on="CountryName", right_on="CountryName")
+
+
+        data1.to_sql(name=str("Series").strip() + str(col).strip(), con=con, if_exists="replace", index=False)
